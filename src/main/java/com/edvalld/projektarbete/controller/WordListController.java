@@ -12,11 +12,13 @@ public class WordListController {
     @Autowired
     private WordListRepository wordListRepository;
 
+    //skapar ny tom lista
     @PostMapping
     public ResponseEntity<WordList> createNewWordList(@RequestBody WordList wordList) {
         return ResponseEntity.ok(wordListRepository.save(wordList));
     }
 
+    //hämtar en ordlista
     @GetMapping("/{wordListId}")
     public ResponseEntity<WordList> getWordList(@PathVariable Long wordListId) {
         WordList list = wordListRepository.findById(wordListId)

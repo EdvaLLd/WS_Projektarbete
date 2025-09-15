@@ -17,14 +17,40 @@ public class WordController {
     @Autowired
     private WordListRepository wordListRepository;
 
+    //lägger till ord till en lista
     @PostMapping("/{wordListId}")
     public ResponseEntity<Word> addWordToList(@PathVariable Long wordListId, @RequestBody Word word) {
         WordList list = wordListRepository.findById(wordListId)
                 .orElseThrow(() -> new RuntimeException("WordList not found"));
 
-        word.setWordList(list);          // koppla ordet till listan
-        list.getWords().add(word);       // lägg till ordet i listan
+        word.createWordListConnection(list);
         return ResponseEntity.ok(wordRepository.save(word));
+    }
+
+    //redigerar ett ord i en lista
+    @PostMapping("/edit/{wordId}")
+    public ResponseEntity<Word> editWordInList(@PathVariable Long wordId, @RequestBody Word newWord){
+
+        //hitta ordet
+        Word word = wordRepository.getWordById(wordId);
+        WordList wordList = word.getWordList();
+
+        //byta ordet
+        word.setWord(newWord.getWord());
+        word.setAnswer(newWord.getAnswer());
+
+        return ResponseEntity.ok(wordRepository.save(word));
+    }
+
+    @DeleteMapping("/{wordId}")
+    public ResponseEntity<String> removeWord(@PathVariable Long wordId){
+
+        //hitta ordet
+        Word word = wordRepository.getWordById(wordId);
+
+        word.removeWordListConnection();
+        wordRepository.delete(word);
+        return ResponseEntity.ok("Word removed");
     }
 
 }

@@ -47,4 +47,14 @@ public class Word {
     public void setWordList(WordList wordList) {
         this.wordList = wordList;
     }
+
+    public void createWordListConnection (WordList wordList){
+        this.wordList = wordList;
+        wordList.getWords().add(this);
+    }
+
+    public void removeWordListConnection (){
+        wordList.getWords().remove(this);
+        this.wordList = null;
+    }
 }
