@@ -4,7 +4,7 @@ Projektet använder sig av en lokal databas (postgreSQL) och en koppling till de
 
 Exempel på anrop:
 http://localhost:PORT/wordList/random/1 - returnerar ett slumpat ord från ordlistan med ID 1
-http://localhost:8080/word/1 med en body 
+http://localhost:PORT/word/1 med en body 
 {
 	"word": "exempel",
     "answer": "example"
