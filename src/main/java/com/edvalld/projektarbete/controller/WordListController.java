@@ -1,10 +1,13 @@
 package com.edvalld.projektarbete.controller;
 
+import com.edvalld.projektarbete.model.Word;
 import com.edvalld.projektarbete.model.WordList;
 import com.edvalld.projektarbete.repository.WordListRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Random;
 
 @RestController
 @RequestMapping("/wordList")
@@ -24,5 +27,14 @@ public class WordListController {
         WordList list = wordListRepository.findById(wordListId)
                 .orElseThrow(() -> new RuntimeException("WordList not found"));
         return ResponseEntity.ok(list);
+    }
+
+    @GetMapping("/random/{wordListId}")
+    public ResponseEntity<Word> getRandomWord(@PathVariable Long wordListId){
+        WordList list = wordListRepository.findById(wordListId)
+                .orElseThrow(() -> new RuntimeException("WordList not found"));
+        Random random = new Random();
+        int setCount = (int)list.getWords().size();
+        return ResponseEntity.ok(list.getWords().stream().toList().get(random.nextInt(setCount)));
     }
 }
