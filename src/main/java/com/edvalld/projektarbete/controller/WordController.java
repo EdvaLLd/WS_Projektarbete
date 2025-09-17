@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/word")
 public class WordController {
@@ -17,14 +19,15 @@ public class WordController {
     @Autowired
     private WordListRepository wordListRepository;
 
-    //lägger till ord till en lista
+    //gör ett ord och lägger till det i en lista
     @PostMapping("/{wordListId}")
     public ResponseEntity<Word> addWordToList(@PathVariable Long wordListId, @RequestBody Word word) {
-        WordList list = wordListRepository.findById(wordListId)
-                .orElseThrow(() -> new RuntimeException("WordList not found"));
+        Optional<WordList> list = wordListRepository.findById(wordListId);
+        if(list.isEmpty()) return ResponseEntity.notFound().build();
 
-        word.createWordListConnection(list);
-        return ResponseEntity.ok(wordRepository.save(word));
+        word.createWordListConnection(list.get());
+
+        return ResponseEntity.status(201).body(wordRepository.save(word));
     }
 
     //redigerar ett ord i en lista
@@ -32,24 +35,27 @@ public class WordController {
     public ResponseEntity<Word> editWordInList(@PathVariable Long wordId, @RequestBody Word newWord){
 
         //hitta ordet
-        Word word = wordRepository.getWordById(wordId);
-        WordList wordList = word.getWordList();
+        Optional<Word> word = wordRepository.getWordById(wordId);
+        if(word.isEmpty()) return ResponseEntity.notFound().build();
+        WordList wordList = word.get().getWordList();
 
         //byta ordet
-        word.setWord(newWord.getWord());
-        word.setAnswer(newWord.getAnswer());
+        word.get().setWord(newWord.getWord());
+        word.get().setAnswer(newWord.getAnswer());
 
-        return ResponseEntity.ok(wordRepository.save(word));
+        return ResponseEntity.ok(wordRepository.save(word.get()));
     }
 
     @DeleteMapping("/{wordId}")
     public ResponseEntity<String> removeWord(@PathVariable Long wordId){
 
         //hitta ordet
-        Word word = wordRepository.getWordById(wordId);
+        Optional<Word> word = wordRepository.getWordById(wordId);
+        if(word.isEmpty()) return ResponseEntity.notFound().build();
 
-        word.removeWordListConnection();
-        wordRepository.delete(word);
+        word.get().removeWordListConnection();
+        wordRepository.delete(word.get());
+
         return ResponseEntity.ok("Word removed");
     }
 

@@ -13,6 +13,9 @@ public class Word {
     private String answer;
 
 
+    //de här används för kopplingen mellan word och wordlist.
+    //@JsonBackReference gör så att det inte blir en oändlighets-loop i returvärdet där ordet
+    //returnerar listan och listan returnerar ordet.
     @ManyToOne
     @JoinColumn(name = "word_list_id")  // foreign key i Post-tabellen
     @JsonBackReference
