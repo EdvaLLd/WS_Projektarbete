@@ -31,6 +31,17 @@ public class WordListController {
         return ResponseEntity.ok(list.get());
     }
 
+    @GetMapping("/selecthighest/{wordListId}")
+    public ResponseEntity<Word> getHighestWordList(@PathVariable Long wordListId)
+    {
+        Optional<WordList> list = wordListRepository.findById(wordListId);
+        if(list.isEmpty()) return ResponseEntity.notFound().build();
+
+        if(list.get().getMostSelectedWord() == null) return ResponseEntity.notFound().build();
+
+        return ResponseEntity.ok(list.get().getMostSelectedWord());
+    }
+
     //hämtar ett slumpat ord från ordlistan
     @GetMapping("/random/{wordListId}")
     public ResponseEntity<Word> getRandomWord(@PathVariable Long wordListId){

@@ -1,6 +1,7 @@
 package com.edvalld.projektarbete.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -12,6 +13,7 @@ public class Word {
     private String word;
     private String answer;
 
+    private int wordSelectedCount = 0;
 
     //de här används för kopplingen mellan word och wordlist.
     //@JsonBackReference gör så att det inte blir en oändlighets-loop i returvärdet där ordet
@@ -25,6 +27,7 @@ public class Word {
     public Word(String word, String answer) {
         this.word = word;
         this.answer = answer;
+        this.wordSelectedCount = 0;
     }
 
     public String getWord() {
@@ -49,6 +52,14 @@ public class Word {
 
     public void setWordList(WordList wordList) {
         this.wordList = wordList;
+    }
+
+    public int getWordSelectedCount() {
+        return wordSelectedCount;
+    }
+
+    public void increaseWordSelectedCount() {
+        this.wordSelectedCount++;
     }
 
     public void createWordListConnection (WordList wordList){

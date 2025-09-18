@@ -46,6 +46,18 @@ public class WordController {
         return ResponseEntity.ok(wordRepository.save(word.get()));
     }
 
+
+    //denna är väldigt konstig, men behövs för att testa funktionaliteten utan front end
+    @PostMapping("/increase/{wordId}")
+    public ResponseEntity<Word> increaseWordSelectedCount(@PathVariable Long wordId)
+    {
+        Optional<Word> word = wordRepository.getWordById(wordId);
+        if(word.isEmpty()) return ResponseEntity.notFound().build();
+        word.get().increaseWordSelectedCount();
+
+        return ResponseEntity.ok(wordRepository.save(word.get()));
+    }
+
     @DeleteMapping("/{wordId}")
     public ResponseEntity<String> removeWord(@PathVariable Long wordId){
 
